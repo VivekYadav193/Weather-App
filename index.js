@@ -61,7 +61,7 @@ const grantAccessContainer = document.querySelector(".grant-location-container")
 const searchform = document.querySelector("[data-searchForm]")
 const loadingScreen = document.querySelector(".loading-container")
 const userInfoContainer = document.querySelector(".user-info-container")
-
+const erth = document.querySelector(".errorthrow")
 
 
 
@@ -75,6 +75,7 @@ getfromSessionStorage()
 
 function switchTab(clickedTab) {
     if (clickedTab != currentTab) {
+        erth.classList.remove("active")
         currentTab.classList.remove("current-tab")
         currentTab = clickedTab
         currentTab.classList.add("current-tab")
@@ -204,17 +205,24 @@ async function fetchSearchWeatherInfo(city) {
     loadingScreen.classList.add("active")
     userInfoContainer.classList.remove("active")
     grantAccessContainer.classList.remove("active")
-    try {
+    
         const response = await fetch(
             `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apikey}&units=metric`)
 
         const data = await response.json()
         loadingScreen.classList.remove("active")
+        if(data.cod==404)
+        {
+           erth.classList.add("active")
+            console.log(data.message)
+            console.log("error")
+        }
+       else
+       {
         userInfoContainer.classList.add("active")
         renderWeatherInfo(data)
-    }
-    catch (err) {
-        console.log("Error")
-    }
+       }
+    
+    
 
 }
